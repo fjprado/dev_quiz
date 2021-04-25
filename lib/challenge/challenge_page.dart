@@ -24,6 +24,11 @@ class _ChallengePageState extends State<ChallengePage> {
     super.initState();
   }
 
+  void nextPage() {
+    pageController.nextPage(
+        duration: Duration(milliseconds: 300), curve: Curves.linear);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,32 +54,33 @@ class _ChallengePageState extends State<ChallengePage> {
       body: PageView(
           physics: NeverScrollableScrollPhysics(),
           controller: pageController,
-          children:
-              widget.questions.map((e) => QuizWidget(question: e)).toList()),
+          children: widget.questions
+              .map((e) => QuizWidget(
+                    question: e,
+                    onChange: nextPage,
+                  ))
+              .toList()),
       bottomNavigationBar: SafeArea(
+        bottom: true,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Expanded(
-                child: NextButtonWidget.white(
-                  label: "Skip",
-                  onTap: () {
-                    pageController.nextPage(
-                        duration: Duration(milliseconds: 500),
-                        curve: Curves.linear);
-                  },
+          child: ValueListenableBuilder<int>(
+            valueListenable: controller.currentPageNotifier,
+            builder: (context, value, _) => Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Expanded(
+                  child: NextButtonWidget.white(
+                    label: "Skip",
+                    onTap: value <= widget.questions.length
+                        ? nextPage
+                        : () {
+                            Navigator.pop(context);
+                          },
+                  ),
                 ),
-              ),
-              SizedBox(width: 7),
-              Expanded(
-                child: NextButtonWidget.green(
-                  label: "Confirm",
-                  onTap: () {},
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
