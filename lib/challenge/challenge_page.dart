@@ -2,6 +2,7 @@ import 'package:dev_quiz/challenge/challenge_controller.dart';
 import 'package:dev_quiz/challenge/widgets/next_button/next_button_widget.dart';
 import 'package:dev_quiz/challenge/widgets/question_indicator/question_indicator_widget.dart';
 import 'package:dev_quiz/challenge/widgets/quiz/quiz_widget.dart';
+import 'package:dev_quiz/result/result_page.dart';
 import 'package:dev_quiz/shared/models/question_model.dart';
 import 'package:flutter/material.dart';
 
@@ -27,6 +28,11 @@ class _ChallengePageState extends State<ChallengePage> {
   void nextPage() {
     pageController.nextPage(
         duration: Duration(milliseconds: 300), curve: Curves.linear);
+  }
+
+  void resultPage() {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => ResultPage()));
   }
 
   @override
@@ -57,7 +63,10 @@ class _ChallengePageState extends State<ChallengePage> {
           children: widget.questions
               .map((e) => QuizWidget(
                     question: e,
-                    onChange: nextPage,
+                    onChange: widget.questions.indexOf(e) <
+                            (widget.questions.length - 1)
+                        ? nextPage
+                        : resultPage,
                   ))
               .toList()),
       bottomNavigationBar: SafeArea(
@@ -72,11 +81,8 @@ class _ChallengePageState extends State<ChallengePage> {
                 Expanded(
                   child: NextButtonWidget.white(
                     label: "Skip",
-                    onTap: value <= widget.questions.length
-                        ? nextPage
-                        : () {
-                            Navigator.pop(context);
-                          },
+                    onTap:
+                        value < widget.questions.length ? nextPage : resultPage,
                   ),
                 ),
               ],
