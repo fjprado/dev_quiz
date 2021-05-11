@@ -2,6 +2,7 @@ import 'package:dev_quiz/challenge/widgets/next_button/next_button_widget.dart';
 import 'package:dev_quiz/core/app_images.dart';
 import 'package:dev_quiz/core/app_text_styles.dart';
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
 
 class ResultPage extends StatelessWidget {
   final String title;
@@ -24,10 +25,12 @@ class ResultPage extends StatelessWidget {
           children: [
             Column(
               children: [
-                Image.asset(AppImages.trophy),
+                result / length >= 0.5
+                    ? Image.asset(AppImages.trophy)
+                    : Image.asset(AppImages.error),
                 SizedBox(height: 20),
                 Text(
-                  "Congratulations!",
+                  result / length >= 0.5 ? "Congratulations!" : "Sorry",
                   style: AppTextStyles.heading40,
                 ),
                 SizedBox(height: 16),
@@ -54,7 +57,11 @@ class ResultPage extends StatelessWidget {
                         child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 68),
                       child: NextButtonWidget.purple(
-                          label: "Share", onTap: (_) {}),
+                          label: "Share",
+                          onTap: (_) {
+                            Share.share(
+                                'This is my result in Quiz:\nI have ${result / length * 100}% of right answers.');
+                          }),
                     )),
                   ],
                 ),
